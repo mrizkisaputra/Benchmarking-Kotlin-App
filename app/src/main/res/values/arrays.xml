@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="select_algorithm_to_benchmark">
+        <item>Bubble Sorting</item>
+        <item>Insertion Sorting</item>
+        <item>Quick Sorting</item>
+        <item>Shell Sorting</item>
+    </string-array>
+</resources>
