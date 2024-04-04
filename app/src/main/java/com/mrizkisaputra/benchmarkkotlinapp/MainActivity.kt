@@ -26,14 +26,16 @@ class MainActivity : AppCompatActivity() {
     private val handler: Handler = Handler(Looper.getMainLooper())
     private lateinit var algorithm: String
     private lateinit var iteration: String
-    private lateinit var bubbleSorting: BubbleSorting
-    private lateinit var insertionSort: InsertionSort
     private lateinit var executionTimes: MutableList<Long>
     private lateinit var executionTimesAdapter: ArrayAdapter<String>
 
-    private fun readJsonFromAsset(): JSONArray {
-        // membaca file json
-        val inputStream: InputStream = assets.open("bubble_insertion.json")
+    private fun readJsonFromAsset(algorithm: String): JSONArray {
+        val inputStream: InputStream
+        if (algorithm.equals("Bubble Sorting") || algorithm.equals("Insertion Sorting")) {
+            inputStream = assets.open("bubble_insertion.json") // membaca file json
+        } else {
+            inputStream = assets.open("quick_shell.json") // membaca file json
+        }
         val json: String = inputStream.bufferedReader().use { it.readText() }
         return JSONArray(json)
     }
@@ -58,9 +60,6 @@ class MainActivity : AppCompatActivity() {
         executionTimesAdapter = ArrayAdapter(this, R.layout.item_list, R.id.text)
         binding.listview.adapter = executionTimesAdapter
 
-        jsonData = readJsonFromAsset()
-        bubbleSorting = BubbleSorting()
-        insertionSort = InsertionSort()
         binding.startBenchmark.setOnClickListener {
             clearBenchmarkResults()
             algorithm = binding.algorithmToBenchmark.text.toString()
@@ -115,9 +114,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startBenchmarkBubbleSort(iteration: Int) {
         for (i in 1..iteration) {
-            val data = readJsonFromAsset()
+            jsonData = readJsonFromAsset(algorithm)
             val measureTimeMillis = measureTimeMillis { // mendapatkan data execution time
-                val sorted = bubbleSorting.sort(data)
+                val sorted = BubbleSorting.sort(jsonData)
                 Log.i("SETELAH DI SORTING", "$sorted")
             }
             executionTimes.add(measureTimeMillis) // menyimpan data execution time
@@ -129,9 +128,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startBenchmarkInsertionSort(iteration: Int) {
         for (i in 1..iteration) {
-            val data = readJsonFromAsset();
+            jsonData = readJsonFromAsset(algorithm);
             val measureTimeMillis = measureTimeMillis { // mendapatkan data execution time
-                val sorted = insertionSort.sort(data)
+                val sorted = InsertionSort.sort(jsonData)
                 Log.i("SETELAH DI SORTING", "$sorted")
             }
             executionTimes.add(measureTimeMillis) // menyimpan data execution time
@@ -145,8 +144,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun startBenchmarkShellSort(teration: Int) {
-
+    private fun startBenchmarkShellSort(iteration: Int) {
+        for (i in 1..iteration) {
+            jsonData = readJsonFromAsset(algorithm);
+            val measureTimeMillis = measureTimeMillis { // mendapatkan data execution time
+                val sorted = ShellSort.sort(jsonData)
+                Log.i("SETELAH DI SORTING", "$sorted")
+            }
+            executionTimes.add(measureTimeMillis) // menyimpan data execution time
+            handler.post {
+                executionTimesAdapter.add("Pengujian iterasi $i data berhasil diurutkan")
+            }
+        }
     }
 
 
