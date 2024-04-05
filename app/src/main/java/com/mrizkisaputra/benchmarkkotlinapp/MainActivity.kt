@@ -140,8 +140,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startBenchmarkQuickSort(teration: Int) {
-
+    private fun startBenchmarkQuickSort(iteration: Int) {
+        for (i in 1..iteration) {
+            jsonData = readJsonFromAsset(algorithm);
+            Log.i("SEBELUM DI SORTING", "$jsonData")
+            val measureTimeMillis = measureTimeMillis { // mendapatkan data execution time
+                QuickSort.sort(jsonData, 0, jsonData.length() - 1)
+                Log.i("SETELAH DI SORTING", "$jsonData")
+            }
+            executionTimes.add(measureTimeMillis) // menyimpan data execution time
+            handler.post {
+                executionTimesAdapter.add("Pengujian iterasi $i data berhasil diurutkan")
+            }
+        }
     }
 
     private fun startBenchmarkShellSort(iteration: Int) {
